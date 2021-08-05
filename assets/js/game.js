@@ -19,14 +19,6 @@ var playerInfo = {
     this.health = 100;
     this.money = 10;
     this.attack = 10;
-  }, // comma!
-  refillHealth: function() {
-    this.health += 20;
-    this.money -= 7;
-  }, // comma!
-  upgradeAttack: function() {
-    this.attack += 6;
-    this.money -= 7;
   }
 };
 var enemyInfo = [
@@ -44,11 +36,39 @@ var enemyInfo = [
   }
 ];
 
+var fightOrSkip = function() {
+  // ask player if they'd like to fight or skip using fightOrSkip function
+  var promptFight = window.prompt('Would you like to FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+
+  // Enter the conditional recursive function call here!
+  // Conditional Recursive Function Call
+  if (promptFight === "" || promptFight === null) {
+  window.alert("You need to provide a valid answer! Please try again.");
+  return fightOrSkip();
+}
+
+  // if player picks "skip" confirm and then stop the loop
+  if (promptFight === "skip" || promptFight === "SKIP") {
+    // confirm player wants to skip
+    var confirmSkip = window.confirm("Are you sure you'd like to quit?");
+
+    // if yes (true), leave fight
+    if (confirmSkip) {
+      window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
+      // subtract money from playerMoney for skipping
+      playerInfo.playerMoney = playerInfo.money - 10;
+      shop();
+    }
+  }
+}
 var fight = function(enemy) {
   // repeat and execute as long as the enemy-robot is alive 
-  while (playerHealth > 0 && enemy.health > 0)  {
-    var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
-    // if player choses to fight, then fight
+  while (playerInfo.health > 0 && enemy.health > 0) {
+    if (fightOrSkip()) {
+      break;
+    }
+       // <-- Replace code with this function call
+    var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
     if (promptFight === "fight" || promptFight === "FIGHT") {
  
     // remove enemy's health by subtracting the amount set in the playerAttack variable
@@ -110,6 +130,8 @@ var startGame = function() {
   playerInfo.attack = 10;
   playerInfo.money = 10;
   for (var i = 0; i < enemyInfo.length; i++) {
+    window.alert('Welcome to Robot Gladiators! Round ' + (i + 1));
+    debugger;
     if (playerHealth > 0 && i < enemyInfo.length - 1) {
       // ask if player wants to use the store before next round
       var storeConfirm = window.confirm("The fight is over, visit the store before the next round?");
@@ -142,28 +164,32 @@ var startGame = function() {
     // use switch to carry out action
     switch (shopOptionPrompt) {
       case "REFILL": // new case
-      refillHealth: function() {
-        if (this.money >= 7) {
+      case "refill":
+        playerInfo.refillHealth();
+        if (playerMoney >= 7) {
           window.alert("Refilling player's health by 20 for 7 dollars.");
-          this.health += 20;
-          this.money -= 7;
-        } 
+    
+          playerHealth = playerHealth + 20;
+          playerMoney = playerMoney - 7;
+        }
         else {
           window.alert("You don't have enough money!");
         }
-      },
+    
         break;
-        case "UPGRADE"
-        upgradeAttack: function() {
-          if (this.money >= 7) {
-            window.alert("Upgrading player's attack by 6 for 7 dollars.");
-            this.attack += 6;
-            this.money -= 7;
-          } 
-          else {
-            window.alert("You don't have enough money!");
-          }
+      case "UPGRADE": // new case
+      case "upgrade":
+        playerInfo.upgradeAttack();
+        if (playerMoney >= 7) {
+          window.alert("Upgrading player's attack by 6 for 7 dollars.");
+    
+          playerAttack = playerAttack + 6;
+          playerMoney = playerMoney - 7;
         }
+        else {
+          window.alert("You don't have enough money!");
+        }
+    
         break;
       case "LEAVE": // new case
       case "leave":
